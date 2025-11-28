@@ -11,5 +11,7 @@ namespace WebApplication1.Data
         {
         }
         public DbSet<WebApplication1.Models.Exercise> Exercise { get; set; } = default!;
+        public DbSet<WebApplication1.Models.Workout> Workout { get; set; } = default!;
+        public DbSet<WebApplication1.Models.Entry> Entry { get; set; } = default!;
     }
 }

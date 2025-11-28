@@ -6,32 +6,31 @@ namespace WebApplication1.Models
     {
         public int Id { get; set; }
 
+        // Powiązanie z Workout
         [Required]
         public int WorkoutId { get; set; }
         public Workout Workout { get; set; }
 
-        
+        // Powiązanie z Exercise
         [Required]
-        [Display(Name = "Ćwiczenie")]
         public int ExerciseId { get; set; }
         public Exercise Exercise { get; set; }
 
-        // Obciążenie w kg
+        // Parametry treningowe
         [Required]
-        [Range(0, 1000)]
-        [Display(Name = "Ciężar")]
+        [Range(0, 1000, ErrorMessage = "Obciążenie musi być wartością nieujemną.")]
+        [Display(Name = "Obciążenie (kg)")]
         public double Weight { get; set; }
 
-        // Liczba serii
         [Required]
-        [Range(1, 100)]
+        [Range(1, 50, ErrorMessage = "Liczba serii musi być dodatnia.")]
+        [Display(Name = "Liczba serii")]
         public int Sets { get; set; }
 
-        // Liczba powtórzeń w każdej serii
         [Required]
-        [Range(1, 200)]
-        [Display(Name = "Powtórzenia")]
-        public int Repetitions { get; set; }
-        
+        [Range(1, 100, ErrorMessage = "Liczba powtórzeń musi być dodatnia.")]
+        [Display(Name = "Powtórzenia w serii")]
+        public int Reps { get; set; }
+
     }
 }
