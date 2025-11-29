@@ -13,7 +13,7 @@ using WebApplication1.Models;
 
 namespace WebApplication1.Controllers
 {
-    
+    [Authorize]
     public class ExercisesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -53,16 +53,16 @@ namespace WebApplication1.Controllers
         }
 
         // GET: Exercises/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
         }
 
         // POST: Exercises/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([Bind("Id,Name")] Exercise exercise)
         {
             if (ModelState.IsValid)
@@ -75,6 +75,7 @@ namespace WebApplication1.Controllers
         }
 
         // GET: Exercises/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -91,10 +92,9 @@ namespace WebApplication1.Controllers
         }
 
         // POST: Exercises/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] Exercise exercise)
         {
             if (id != exercise.Id)
@@ -126,6 +126,7 @@ namespace WebApplication1.Controllers
         }
 
         // GET: Exercises/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -146,6 +147,7 @@ namespace WebApplication1.Controllers
         // POST: Exercises/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var exercise = await _context.Exercise.FindAsync(id);
