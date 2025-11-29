@@ -11,6 +11,7 @@ using WebApplication1.Models;
 
 namespace WebApplication1.Controllers
 {
+    [Authorize]
     public class EntriesController : Controller
     {
         private readonly ApplicationDbContext _context;
