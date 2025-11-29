@@ -36,23 +36,6 @@ namespace WebApplication1.Controllers
             return View(await applicationDbContext.ToListAsync());
         }
 
-        // GET: Workouts/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var workout = await _context.Workout
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (workout == null)
-            {
-                return NotFound();
-            }
-
-            return View(workout);
-        }
 
         // GET: Workouts/Create
         public IActionResult Create()
@@ -72,6 +55,7 @@ namespace WebApplication1.Controllers
                 Id = workoutDTO.Id,
                 StartTime = workoutDTO.StartTime,
                 EndTime = workoutDTO.EndTime,
+                CreatedById = GetUserId()
             };
             if (ModelState.IsValid)
             {
