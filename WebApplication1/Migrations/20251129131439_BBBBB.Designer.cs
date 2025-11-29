@@ -11,7 +11,7 @@ using WebApplication1.Data;
 namespace WebApplication1.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251129130819_BBBBB")]
+    [Migration("20251129131439_BBBBB")]
     partial class BBBBB
     {
         /// <inheritdoc />
