@@ -13,5 +13,10 @@ namespace WebApplication1.Models
         [Required]
         [Display(Name = "Data i czas zakończenia")]
         public DateTime EndTime { get; set; }
+
+        [Display(Name = "Created by")]
+        public string CreatedById { get; set; }
+        [Display(Name = "Created by")]
+        public virtual AppUser? CreatedBy { get; set; }
     }
 }

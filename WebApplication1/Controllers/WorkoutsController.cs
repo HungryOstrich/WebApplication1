@@ -1,18 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 using WebApplication1.Data;
+using WebApplication1.DTOs;
 using WebApplication1.Models;
 
 namespace WebApplication1.Controllers
 {
+    [Authorize]
     public class WorkoutsController : Controller
     {
         private readonly ApplicationDbContext _context;
+
+        private string GetUserId()
+        {
+            return User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
+        }
 
         public WorkoutsController(ApplicationDbContext context)
         {
@@ -22,7 +32,8 @@ namespace WebApplication1.Controllers
         // GET: Workouts
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Workout.ToListAsync());
+            var applicationDbContext = _context.Workout.Where(e => e.CreatedById == GetUserId());
+            return View(await applicationDbContext.ToListAsync());
         }
 
         // GET: Workouts/Details/5
@@ -54,8 +65,14 @@ namespace WebApplication1.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,StartTime,EndTime")] Workout workout)
+        public async Task<IActionResult> Create([Bind("Id,StartTime,EndTime")] WorkoutDTO workoutDTO)
         {
+            Workout workout = new Workout()
+            {
+                Id = workoutDTO.Id,
+                StartTime = workoutDTO.StartTime,
+                EndTime = workoutDTO.EndTime,
+            };
             if (ModelState.IsValid)
             {
                 _context.Add(workout);
@@ -73,7 +90,8 @@ namespace WebApplication1.Controllers
                 return NotFound();
             }
 
-            var workout = await _context.Workout.FindAsync(id);
+            var workout = await _context.Workout.Where(e => e.CreatedById == GetUserId())
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (workout == null)
             {
                 return NotFound();
@@ -86,9 +104,22 @@ namespace WebApplication1.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,StartTime,EndTime")] Workout workout)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,StartTime,EndTime")] WorkoutDTO workoutDTO)
         {
-            if (id != workout.Id)
+            if (id != workoutDTO.Id)
+            {
+                return NotFound();
+            }
+
+            Workout workout = new Workout()
+            {
+                Id = workoutDTO.Id,
+                StartTime = workoutDTO.StartTime,
+                EndTime = workoutDTO.EndTime,
+                CreatedById = GetUserId()
+            };
+
+            if (!WorkoutExists(workout.Id, GetUserId()))
             {
                 return NotFound();
             }
@@ -102,7 +133,7 @@ namespace WebApplication1.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!WorkoutExists(workout.Id))
+                    if (!WorkoutExists(workout.Id, GetUserId()))
                     {
                         return NotFound();
                     }
@@ -149,9 +180,9 @@ namespace WebApplication1.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool WorkoutExists(int id)
+        private bool WorkoutExists(int id, string userId)
         {
-            return _context.Workout.Any(e => e.Id == id);
+            return _context.Workout.Any(e => e.Id == id && e.CreatedById == userId);
         }
     }
 }

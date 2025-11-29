@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using WebApplication1.Data;
 using WebApplication1.Models;
@@ -15,6 +16,10 @@ namespace WebApplication1.Controllers
     public class EntriesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private string GetUserId()
+        {
+            return User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
+        }
 
         public EntriesController(ApplicationDbContext context)
         {
