@@ -30,7 +30,7 @@ namespace WebApplication1.Controllers
         // GET: Entries
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Entry.Include(e => e.Exercise).Include(e => e.Workout);
+            var applicationDbContext = _context.Entry.Where(e => e.CreatedById == GetUserId()).Include(e => e.Exercise).Include(e => e.Workout);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -58,7 +58,7 @@ namespace WebApplication1.Controllers
         public IActionResult Create()
         {
             ViewData["ExerciseId"] = new SelectList(_context.Exercise, "Id", "Name");
-            ViewData["WorkoutId"] = new SelectList(_context.Workout, "Id", "Id");
+            ViewData["WorkoutId"] = new SelectList(_context.Workout.Where(e => e.CreatedById == GetUserId()), "Id", "Id");
             return View();
         }
 
