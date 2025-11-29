@@ -32,5 +32,9 @@ namespace WebApplication1.Models
         [Display(Name = "Powtórzenia w serii")]
         public int Reps { get; set; }
 
+        public string CreatedById { get; set; }
+        [Display(Name = "Created by")]
+        public virtual AppUser? CreatedBy { get; set; }
+
     }
 }

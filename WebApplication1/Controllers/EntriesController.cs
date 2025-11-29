@@ -5,9 +5,11 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using WebApplication1.Data;
 using WebApplication1.Models;
+using WebApplication1.DTOs;
 
 namespace WebApplication1.Controllers
 {
@@ -15,6 +17,10 @@ namespace WebApplication1.Controllers
     public class EntriesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private string GetUserId()
+        {
+            return User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
+        }
 
         public EntriesController(ApplicationDbContext context)
         {
@@ -61,15 +67,25 @@ namespace WebApplication1.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,WorkoutId,ExerciseId,Weight,Sets,Reps")] Entry entry)
+        public async Task<IActionResult> Create([Bind("Id,WorkoutId,ExerciseId,Weight,Sets,Reps")] EntryDTO entryDTO)
         {
+            Entry entry = new Entry()
+            {
+                Id = entryDTO.Id,
+                WorkoutId = entryDTO.WorkoutId,
+                ExerciseId = entryDTO.ExerciseId,
+                Weight = entryDTO.Weight,
+                Sets = entryDTO.Sets,
+                Reps = entryDTO.Reps,
+                CreatedById = GetUserId()
+            };
             if (ModelState.IsValid)
             {
                 _context.Add(entry);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ExerciseId"] = new SelectList(_context.Exercise, "Id", "Id", entry.ExerciseId);
+            ViewData["ExerciseId"] = new SelectList(_context.Exercise, "Id", "Name", entry.ExerciseId);
             ViewData["WorkoutId"] = new SelectList(_context.Workout, "Id", "Id", entry.WorkoutId);
             return View(entry);
         }
@@ -82,12 +98,14 @@ namespace WebApplication1.Controllers
                 return NotFound();
             }
 
-            var entry = await _context.Entry.FindAsync(id);
+            var entry = await _context.Entry
+                .Where(e => e.CreatedById == GetUserId())
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (entry == null)
             {
                 return NotFound();
             }
-            ViewData["ExerciseId"] = new SelectList(_context.Exercise, "Id", "Id", entry.ExerciseId);
+            ViewData["ExerciseId"] = new SelectList(_context.Exercise, "Id", "Name", entry.ExerciseId);
             ViewData["WorkoutId"] = new SelectList(_context.Workout, "Id", "Id", entry.WorkoutId);
             return View(entry);
         }
@@ -97,13 +115,23 @@ namespace WebApplication1.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,WorkoutId,ExerciseId,Weight,Sets,Reps")] Entry entry)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,WorkoutId,ExerciseId,Weight,Sets,Reps")] EntryDTO entryDTO)
         {
-            if (id != entry.Id)
+            if (id != entryDTO.Id)
             {
                 return NotFound();
             }
 
+            Entry entry = new Entry() 
+            {
+                Id = entryDTO.Id,
+                WorkoutId = entryDTO.WorkoutId,
+                Exercise = entryDTO.Exercise,
+                Weight = entryDTO.Weight,
+                Sets = entryDTO.Sets,
+                Reps = entryDTO.Reps,
+                CreatedById = GetUserId()
+            };
             if (ModelState.IsValid)
             {
                 try
@@ -113,7 +141,7 @@ namespace WebApplication1.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!EntryExists(entry.Id))
+                    if (!EntryExists(entry.Id, GetUserId()))
                     {
                         return NotFound();
                     }
@@ -124,7 +152,7 @@ namespace WebApplication1.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ExerciseId"] = new SelectList(_context.Exercise, "Id", "Id", entry.ExerciseId);
+            ViewData["ExerciseId"] = new SelectList(_context.Exercise, "Id", "Name", entry.ExerciseId);
             ViewData["WorkoutId"] = new SelectList(_context.Workout, "Id", "Id", entry.WorkoutId);
             return View(entry);
         }
@@ -138,6 +166,7 @@ namespace WebApplication1.Controllers
             }
 
             var entry = await _context.Entry
+                .Where(e => e.CreatedById == GetUserId())
                 .Include(e => e.Exercise)
                 .Include(e => e.Workout)
                 .FirstOrDefaultAsync(m => m.Id == id);
@@ -154,9 +183,9 @@ namespace WebApplication1.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var entry = await _context.Entry.FindAsync(id);
-            if (entry != null)
+            if (EntryExists(id, GetUserId()))
             {
+                var entry = await _context.Entry.FindAsync(id);
                 _context.Entry.Remove(entry);
             }
 
@@ -164,9 +193,9 @@ namespace WebApplication1.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool EntryExists(int id)
+        private bool EntryExists(int id, string userId)
         {
-            return _context.Entry.Any(e => e.Id == id);
+            return _context.Entry.Any(e => e.Id == id && e.CreatedById == userId);
         }
     }
 }
