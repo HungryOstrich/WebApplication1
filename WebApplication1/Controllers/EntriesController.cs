@@ -49,7 +49,7 @@ namespace WebApplication1.Controllers
         // GET: Entries/Create
         public IActionResult Create()
         {
-            ViewData["ExerciseId"] = new SelectList(_context.Exercise, "Id", "Id");
+            ViewData["ExerciseId"] = new SelectList(_context.Exercise, "Id", "Name");
             ViewData["WorkoutId"] = new SelectList(_context.Workout, "Id", "Id");
             return View();
         }

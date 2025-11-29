@@ -9,12 +9,12 @@ namespace WebApplication1.Models
         // Powiązanie z Workout
         [Required]
         public int WorkoutId { get; set; }
-        public Workout Workout { get; set; }
+        public Workout? Workout { get; set; }
 
         // Powiązanie z Exercise
         [Required]
         public int ExerciseId { get; set; }
-        public Exercise Exercise { get; set; }
+        public Exercise? Exercise { get; set; }
 
         // Parametry treningowe
         [Required]
