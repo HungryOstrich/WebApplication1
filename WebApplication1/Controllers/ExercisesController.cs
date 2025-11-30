@@ -34,23 +34,6 @@ namespace WebApplication1.Controllers
             return View(await _context.Exercise.ToListAsync());
         }
 
-        // GET: Exercises/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var exercise = await _context.Exercise
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (exercise == null)
-            {
-                return NotFound();
-            }
-
-            return View(exercise);
-        }
 
         // GET: Exercises/Create
         [Authorize(Roles = "Admin")]
