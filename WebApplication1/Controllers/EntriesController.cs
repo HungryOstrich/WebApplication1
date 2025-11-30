@@ -35,25 +35,6 @@ namespace WebApplication1.Controllers
             return View(await applicationDbContext.ToListAsync());
         }
 
-        // GET: Entries/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var entry = await _context.Entry
-                .Include(e => e.Exercise)
-                .Include(e => e.Workout)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (entry == null)
-            {
-                return NotFound();
-            }
-
-            return View(entry);
-        }
 
         // GET: Entries/Create
         public IActionResult Create()

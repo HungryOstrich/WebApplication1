@@ -13,7 +13,10 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Workout)
+                @Html.DisplayNameFor(model => model.Workout.StartTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Workout.EndTime)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Exercise)
@@ -35,6 +38,9 @@
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Workout.StartTime)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.Workout.EndTime)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Exercise.Name)

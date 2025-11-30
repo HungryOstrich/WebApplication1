@@ -18,18 +18,18 @@ namespace WebApplication1.Models
 
         // Parametry treningowe
         [Required]
-        [Range(0, 1000, ErrorMessage = "Obciążenie musi być wartością nieujemną.")]
-        [Display(Name = "Obciążenie (kg)")]
+        [Range(0, 1000, ErrorMessage = "Weight or Distance can't be negative.")]
+        [Display(Name = "Weight/Distance")]
         public double Weight { get; set; }
 
         [Required]
-        [Range(1, 50, ErrorMessage = "Liczba serii musi być dodatnia.")]
-        [Display(Name = "Liczba serii")]
+        [Range(1, 50, ErrorMessage = "Number of sets can't be negative.")]
+        [Display(Name = "Sets")]
         public int Sets { get; set; }
 
         [Required]
-        [Range(1, 100, ErrorMessage = "Liczba powtórzeń musi być dodatnia.")]
-        [Display(Name = "Powtórzenia w serii")]
+        [Range(1, 100, ErrorMessage = "Number of reps can't be negative.")]
+        [Display(Name = "Reps")]
         public int Reps { get; set; }
 
         public string CreatedById { get; set; }
