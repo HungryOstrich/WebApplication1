@@ -58,7 +58,7 @@ namespace WebApplication1.Controllers
         public IActionResult Create()
         {
             ViewData["ExerciseId"] = new SelectList(_context.Exercise, "Id", "Name");
-            ViewData["WorkoutId"] = new SelectList(_context.Workout.Where(e => e.CreatedById == GetUserId()), "Id", "Id");
+            ViewData["WorkoutId"] = new SelectList(_context.Workout.Where(e => e.CreatedById == GetUserId()), "Id", "StartTime");
             return View();
         }
 
@@ -86,7 +86,7 @@ namespace WebApplication1.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["ExerciseId"] = new SelectList(_context.Exercise, "Id", "Name", entry.ExerciseId);
-            ViewData["WorkoutId"] = new SelectList(_context.Workout.Where(e => e.CreatedById == GetUserId()), "Id", "Id", entry.WorkoutId);
+            ViewData["WorkoutId"] = new SelectList(_context.Workout.Where(e => e.CreatedById == GetUserId()), "Id", "StartTime", entry.WorkoutId);
             return View(entry);
         }
 
