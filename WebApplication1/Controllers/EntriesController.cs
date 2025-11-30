@@ -31,6 +31,7 @@ namespace WebApplication1.Controllers
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.Entry.Where(e => e.CreatedById == GetUserId()).Include(e => e.Exercise).Include(e => e.Workout);
+            ViewData["WorkoutId"] = new SelectList(_context.Workout.Where(e => e.CreatedById == GetUserId()), "Id", "StartTime");
             return View(await applicationDbContext.ToListAsync());
         }
 
